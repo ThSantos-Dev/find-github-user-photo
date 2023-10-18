@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HAHHAAHHAHAH</title>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <script>
+        window.onload = () => {
+            Swal.fire({
+                title: 'Submit your Github username',
+                input: 'text',
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Look up',
+                showLoaderOnConfirm: true,
+                preConfirm: (login) => {
+                    return fetch(`//api.github.com/users/${login}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText)
+                            }
+                            return response.json()
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(
+                                `Request failed: ${error}`
+                            )
+                        })
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: `${result.value.login}'s avatar`,
+                        imageUrl: result.value.avatar_url
+                    })
+                }
+            })
+        }
+    </script>
+</body>
+
+</html>
